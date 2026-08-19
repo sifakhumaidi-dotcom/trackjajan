@@ -1,0 +1,1478 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Uang Jajan — Petualangan Nabungmu</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --cream:#F7F3E8;
+    --cream-2:#FFFDF8;
+    --forest:#1B4332;
+    --forest-soft:#2D6A4F;
+    --green:#2ECC71;
+    --green-deep:#22A85A;
+    --coral:#FF6B5E;
+    --coral-deep:#E8503F;
+    --gold:#FFC64B;
+    --gold-deep:#F0A500;
+    --navy:#3D5A80;
+    --line:#E7E0CD;
+    --shadow: 0 4px 0 rgba(27,67,50,0.12);
+    --shadow-btn: 0 4px 0 rgba(0,0,0,0.15);
+    --radius: 20px;
+  }
+  *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
+  html,body{margin:0;padding:0;}
+  body{
+    font-family:'Nunito', sans-serif;
+    background:var(--cream);
+    color:var(--forest);
+    min-height:100vh;
+    overflow-x:hidden;
+  }
+  h1,h2,h3,.font-display{font-family:'Baloo 2', sans-serif;}
+  button{font-family:inherit; cursor:pointer;}
+  .app{
+    display:flex;
+    min-height:100vh;
+  }
+
+  /* ---------- SIDEBAR (desktop) ---------- */
+  .sidebar{
+    width:230px;
+    background:var(--cream-2);
+    border-right:2px solid var(--line);
+    padding:24px 16px;
+    display:none;
+    flex-direction:column;
+    gap:6px;
+    position:fixed;
+    top:0; left:0; bottom:0;
+  }
+  .sidebar .brand{
+    display:flex; align-items:center; gap:10px;
+    padding:6px 10px 22px 10px;
+    font-family:'Baloo 2';
+    font-weight:800;
+    font-size:20px;
+    color:var(--forest);
+  }
+  .sidebar .brand .pig{width:34px; height:34px;}
+  .navlink{
+    display:flex; align-items:center; gap:12px;
+    padding:12px 14px;
+    border-radius:14px;
+    font-weight:800;
+    font-size:15px;
+    color:var(--forest-soft);
+    border:none;
+    background:transparent;
+    text-align:left;
+    transition:background .15s ease, color .15s ease, transform .1s ease;
+  }
+  .navlink .ic{font-size:20px;}
+  .navlink:hover{background:#EFE9D8;}
+  .navlink.active{background:var(--green); color:white; box-shadow: var(--shadow);}
+  .sidebar-foot{
+    margin-top:auto;
+    padding:10px;
+    font-size:12px;
+    color:#9a9482;
+  }
+
+  /* ---------- MAIN ---------- */
+  .main{
+    flex:1;
+    padding:20px 16px 100px 16px;
+    max-width:900px;
+    margin:0 auto;
+    width:100%;
+  }
+  .page{display:none; animation:fadeUp .35s ease;}
+  .page.active{display:block;}
+  @keyframes fadeUp{from{opacity:0; transform:translateY(8px);} to{opacity:1; transform:translateY(0);}}
+
+  /* ---------- TOP STATUS BAR ---------- */
+  .status-bar{
+    display:flex; align-items:center; justify-content:space-between;
+    gap:10px;
+    margin-bottom:18px;
+    flex-wrap:wrap;
+  }
+  .streak-chip, .level-chip{
+    display:flex; align-items:center; gap:6px;
+    background:var(--cream-2);
+    border:2px solid var(--line);
+    border-radius:999px;
+    padding:6px 14px;
+    font-weight:800;
+    font-size:14px;
+  }
+  .streak-chip .flame{filter:drop-shadow(0 2px 0 rgba(0,0,0,0.05));}
+  .level-chip{color:var(--navy);}
+  .xp-wrap{
+    flex:1;
+    min-width:140px;
+  }
+  .xp-track{
+    height:14px;
+    background:#EFE9D8;
+    border-radius:999px;
+    overflow:hidden;
+    border:2px solid var(--line);
+  }
+  .xp-fill{
+    height:100%;
+    background:linear-gradient(90deg, var(--gold), var(--gold-deep));
+    border-radius:999px;
+    transition:width .6s cubic-bezier(.2,.9,.3,1.2);
+  }
+  .xp-label{font-size:11px; font-weight:800; color:#8a8368; margin-top:4px;}
+
+  /* ---------- MASCOT CARD ---------- */
+  .mascot-card{
+    background:linear-gradient(180deg, #EAF6EC, var(--cream-2));
+    border:2px solid var(--line);
+    border-radius:28px;
+    padding:20px;
+    display:flex;
+    align-items:center;
+    gap:16px;
+    margin-bottom:18px;
+    position:relative;
+    overflow:hidden;
+  }
+  .mascot-wrap{flex-shrink:0; width:96px; height:96px;}
+  .mascot-wrap svg{width:100%; height:100%; display:block;}
+  .bubble{
+    background:white;
+    border:2px solid var(--line);
+    border-radius:18px;
+    padding:12px 16px;
+    font-weight:700;
+    font-size:14.5px;
+    position:relative;
+    flex:1;
+    line-height:1.4;
+  }
+  .bubble:before{
+    content:"";
+    position:absolute;
+    left:-9px; top:22px;
+    width:16px; height:16px;
+    background:white;
+    border-left:2px solid var(--line);
+    border-bottom:2px solid var(--line);
+    transform:rotate(45deg);
+  }
+
+  /* ---------- SUMMARY CARDS ---------- */
+  .grid-cards{
+    display:grid;
+    grid-template-columns:repeat(2, 1fr);
+    gap:12px;
+    margin-bottom:18px;
+  }
+  .card{
+    background:var(--cream-2);
+    border:2px solid var(--line);
+    border-radius:18px;
+    padding:14px 16px;
+    box-shadow:var(--shadow);
+  }
+  .card .label{font-size:12px; font-weight:800; color:#8a8368; text-transform:uppercase; letter-spacing:.03em;}
+  .card .value{font-family:'Baloo 2'; font-size:22px; font-weight:700; margin-top:4px;}
+  .card.saldo .value{color:var(--forest);}
+  .card.masuk .value{color:var(--green-deep);}
+  .card.keluar .value{color:var(--coral-deep);}
+  .card.tabungan .value{color:var(--gold-deep);}
+
+  /* ---------- ACTION BUTTONS ---------- */
+  .actions{
+    display:grid;
+    grid-template-columns:repeat(3, 1fr);
+    gap:10px;
+    margin-bottom:22px;
+  }
+  .action-btn{
+    border:none;
+    border-radius:18px;
+    padding:16px 8px;
+    color:white;
+    font-family:'Baloo 2';
+    font-weight:700;
+    font-size:14px;
+    display:flex; flex-direction:column; align-items:center; gap:6px;
+    box-shadow:var(--shadow-btn);
+    transition:transform .08s ease, box-shadow .08s ease;
+  }
+  .action-btn .emoji{font-size:26px;}
+  .action-btn:active{transform:translateY(3px); box-shadow:0 1px 0 rgba(0,0,0,0.15);}
+  .action-btn.masuk{background:var(--green);}
+  .action-btn.keluar{background:var(--coral);}
+  .action-btn.tabung{background:var(--gold); color:var(--forest);}
+
+  .section-title{
+    font-family:'Baloo 2'; font-weight:700; font-size:18px;
+    margin:22px 0 12px 0;
+    display:flex; align-items:center; gap:8px;
+  }
+
+  /* ---------- BADGES ---------- */
+  .badges-row{display:flex; gap:10px; overflow-x:auto; padding-bottom:6px;}
+  .badge{
+    flex-shrink:0;
+    width:84px;
+    text-align:center;
+    padding:10px 6px;
+    border-radius:16px;
+    background:var(--cream-2);
+    border:2px solid var(--line);
+  }
+  .badge.locked{opacity:.4; filter:grayscale(1);}
+  .badge .bicon{font-size:28px;}
+  .badge .bname{font-size:10.5px; font-weight:800; margin-top:4px; line-height:1.2;}
+
+  /* ---------- HISTORY ---------- */
+  .filter-tabs{display:flex; gap:8px; margin-bottom:14px; flex-wrap:wrap;}
+  .filter-tab{
+    border:2px solid var(--line);
+    background:var(--cream-2);
+    padding:7px 14px;
+    border-radius:999px;
+    font-weight:800;
+    font-size:13px;
+    color:var(--forest-soft);
+  }
+  .filter-tab.active{background:var(--forest); color:white; border-color:var(--forest);}
+  .tx-item{
+    display:flex; align-items:center; gap:12px;
+    background:var(--cream-2);
+    border:2px solid var(--line);
+    border-radius:16px;
+    padding:12px 14px;
+    margin-bottom:10px;
+  }
+  .tx-icon{
+    width:40px; height:40px; border-radius:12px;
+    display:flex; align-items:center; justify-content:center;
+    font-size:19px; flex-shrink:0;
+  }
+  .tx-icon.masuk{background:#DFF6E4;}
+  .tx-icon.keluar{background:#FFE4E1;}
+  .tx-icon.tabung{background:#FFF3D6;}
+  .tx-info{flex:1; min-width:0;}
+  .tx-title{font-weight:800; font-size:14.5px;}
+  .tx-sub{font-size:12px; color:#8a8368; margin-top:1px;}
+  .tx-amount{font-family:'Baloo 2'; font-weight:700; font-size:15px; white-space:nowrap;}
+  .tx-amount.plus{color:var(--green-deep);}
+  .tx-amount.minus{color:var(--coral-deep);}
+  .tx-amount.save{color:var(--gold-deep);}
+  .tx-actions{display:flex; gap:4px;}
+  .icon-btn{
+    background:none; border:none; font-size:15px; padding:4px; border-radius:8px; color:#9a9482;
+  }
+  .icon-btn:hover{background:#EFE9D8;}
+  .empty-state{
+    text-align:center; padding:40px 20px; color:#9a9482; font-weight:700;
+  }
+  .empty-state .em{font-size:40px; display:block; margin-bottom:8px;}
+
+  /* ---------- RINGKASAN / bars ---------- */
+  .bar-row{margin-bottom:14px;}
+  .bar-row .brow-top{display:flex; justify-content:space-between; font-size:13px; font-weight:800; margin-bottom:5px;}
+  .bar-track{height:16px; background:#EFE9D8; border-radius:999px; overflow:hidden; border:2px solid var(--line);}
+  .bar-fill{height:100%; border-radius:999px; transition:width .6s ease;}
+
+  .progress-hero{
+    background:linear-gradient(180deg, #FFF6DE, var(--cream-2));
+    border:2px solid var(--line);
+    border-radius:24px;
+    padding:22px;
+    text-align:center;
+    margin-bottom:18px;
+  }
+  .progress-hero .target-amount{font-family:'Baloo 2'; font-size:26px; font-weight:800; color:var(--forest);}
+  .progress-hero .sub{font-size:13px; color:#8a8368; font-weight:700; margin-top:2px;}
+  .ring-wrap{position:relative; width:150px; height:150px; margin:16px auto;}
+  .ring-wrap svg{transform:rotate(-90deg);}
+  .ring-center{position:absolute; inset:0; display:flex; align-items:center; justify-content:center; flex-direction:column;}
+  .ring-center .pct{font-family:'Baloo 2'; font-size:28px; font-weight:800; color:var(--gold-deep);}
+  .ring-center .pig-mini{width:40px; height:40px; margin-bottom:2px;}
+
+  /* ---------- FORM / MODAL ---------- */
+  .overlay{
+    position:fixed; inset:0; background:rgba(27,67,50,0.35);
+    display:none; align-items:flex-end; justify-content:center; z-index:50;
+  }
+  .overlay.open{display:flex;}
+  @media (min-width:640px){ .overlay{align-items:center;} }
+  .modal{
+    background:var(--cream-2);
+    width:100%; max-width:440px;
+    border-radius:26px 26px 0 0;
+    padding:22px 20px 26px 20px;
+    animation:slideUp .25s ease;
+    max-height:90vh; overflow-y:auto;
+  }
+  @media (min-width:640px){ .modal{border-radius:26px;} }
+  @keyframes slideUp{from{transform:translateY(30px); opacity:0;} to{transform:translateY(0); opacity:1;}}
+  .modal h3{margin:0 0 14px 0; font-size:20px; display:flex; align-items:center; gap:8px;}
+  .field{margin-bottom:14px;}
+  .field label{display:block; font-weight:800; font-size:13px; margin-bottom:6px; color:var(--forest-soft);}
+  .field input, .field select, .field textarea{
+    width:100%;
+    padding:12px 14px;
+    border:2px solid var(--line);
+    border-radius:14px;
+    font-family:'Nunito'; font-size:15px; font-weight:700;
+    background:white;
+    color:var(--forest);
+  }
+  .field input:focus, .field select:focus, .field textarea:focus{outline:none; border-color:var(--green);}
+  .cat-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:8px;}
+  .cat-pick{
+    border:2px solid var(--line); background:white; border-radius:14px;
+    padding:10px 4px; text-align:center; font-size:12px; font-weight:800;
+  }
+  .cat-pick .ce{font-size:20px; display:block;}
+  .cat-pick.sel{border-color:var(--green); background:#EAF6EC;}
+  .modal-actions{display:flex; gap:10px; margin-top:6px;}
+  .btn{
+    flex:1; padding:13px; border:none; border-radius:14px; font-family:'Baloo 2'; font-weight:700; font-size:15px;
+    box-shadow:var(--shadow-btn);
+  }
+  .btn:active{transform:translateY(3px); box-shadow:0 1px 0 rgba(0,0,0,0.15);}
+  .btn.primary{background:var(--green); color:white;}
+  .btn.primary.keluar{background:var(--coral);}
+  .btn.primary.tabung{background:var(--gold); color:var(--forest);}
+  .btn.ghost{background:#EFE9D8; color:var(--forest-soft);}
+  .btn.danger{background:var(--coral-deep); color:white;}
+  .warn-box{
+    background:#FFF3D6; border:2px solid var(--gold-deep); border-radius:14px;
+    padding:12px 14px; font-size:13px; font-weight:700; color:#7a5a00; margin-bottom:12px;
+    display:flex; gap:8px; align-items:flex-start;
+  }
+  .check-row{display:flex; align-items:center; gap:8px; font-weight:700; font-size:13px; margin-top:6px;}
+
+  /* ---------- TROPHY OVERLAY ---------- */
+  .trophy-overlay{
+    position:fixed; inset:0; background:rgba(27,67,50,0.55);
+    display:none; align-items:center; justify-content:center; z-index:60;
+  }
+  .trophy-overlay.open{display:flex;}
+  .trophy-card{
+    background:linear-gradient(180deg, #FFF6DE, white);
+    border-radius:28px; padding:34px 26px; text-align:center; max-width:340px; width:90%;
+    box-shadow:0 20px 50px rgba(0,0,0,0.25);
+    animation:popIn .4s cubic-bezier(.2,.9,.3,1.3);
+  }
+  @keyframes popIn{from{transform:scale(.7); opacity:0;} to{transform:scale(1); opacity:1;}}
+  .trophy-card .ticon{font-size:64px;}
+  .trophy-card h2{font-size:22px; margin:8px 0 4px 0;}
+  .trophy-card p{font-size:14px; color:#8a8368; font-weight:700; margin:0 0 16px 0;}
+
+  #confettiCanvas{position:fixed; inset:0; pointer-events:none; z-index:65;}
+
+  /* ---------- SETTINGS ---------- */
+  .settings-item{
+    background:var(--cream-2); border:2px solid var(--line); border-radius:16px;
+    padding:14px 16px; margin-bottom:12px;
+  }
+  .settings-item .si-title{font-weight:800; font-size:14.5px; margin-bottom:2px;}
+  .settings-item .si-sub{font-size:12px; color:#8a8368; margin-bottom:10px;}
+  .toggle{
+    display:flex; align-items:center; justify-content:space-between;
+  }
+  .switch{position:relative; width:46px; height:26px; flex-shrink:0;}
+  .switch input{opacity:0; width:0; height:0;}
+  .slider-tg{position:absolute; cursor:pointer; inset:0; background:#d9d2ba; border-radius:999px; transition:.2s;}
+  .slider-tg:before{content:""; position:absolute; width:20px; height:20px; left:3px; top:3px; background:white; border-radius:50%; transition:.2s;}
+  input:checked + .slider-tg{background:var(--green);}
+  input:checked + .slider-tg:before{transform:translateX(20px);}
+  .settings-row-btns{display:flex; gap:10px;}
+  .file-hidden{display:none;}
+
+  /* ---------- BOTTOM NAV (mobile) ---------- */
+  .bottom-nav{
+    position:fixed; left:0; right:0; bottom:0;
+    background:var(--cream-2);
+    border-top:2px solid var(--line);
+    display:flex;
+    padding:6px 4px calc(6px + env(safe-area-inset-bottom)) 4px;
+    z-index:40;
+  }
+  .bnav-item{
+    flex:1; display:flex; flex-direction:column; align-items:center; gap:2px;
+    background:none; border:none; padding:6px 2px; border-radius:12px;
+    color:#a39d89; font-size:10.5px; font-weight:800;
+  }
+  .bnav-item .ic{font-size:20px;}
+  .bnav-item.active{color:var(--green-deep);}
+
+  @media (min-width:860px){
+    .sidebar{display:flex;}
+    .main{margin-left:230px; padding:32px 32px 40px 32px;}
+    .bottom-nav{display:none;}
+    .grid-cards{grid-template-columns:repeat(4,1fr);}
+  }
+
+  .toast{
+    position:fixed; top:16px; left:50%; transform:translateX(-50%) translateY(-20px);
+    background:var(--forest); color:white; padding:10px 18px; border-radius:999px;
+    font-weight:800; font-size:13px; z-index:70; opacity:0; transition:all .25s ease;
+    pointer-events:none;
+  }
+  .toast.show{opacity:1; transform:translateX(-50%) translateY(0);}
+</style>
+</head>
+<body>
+
+<canvas id="confettiCanvas"></canvas>
+
+<div class="app">
+  <!-- SIDEBAR (desktop) -->
+  <nav class="sidebar">
+    <div class="brand">
+      <svg class="pig" viewBox="0 0 100 100"><use href="#pig-face"></use></svg>
+      Uang Jajan
+    </div>
+    <button class="navlink active" data-page="beranda"><span class="ic">🏠</span> Beranda</button>
+    <button class="navlink" data-page="ringkasan"><span class="ic">📊</span> Ringkasan</button>
+    <button class="navlink" data-page="riwayat"><span class="ic">📜</span> Riwayat</button>
+    <button class="navlink" data-page="tabungan"><span class="ic">🏆</span> Tabungan</button>
+    <button class="navlink" data-page="pengaturan"><span class="ic">⚙️</span> Pengaturan</button>
+    <div class="sidebar-foot">Piko selalu jagain uangmu 🐷</div>
+  </nav>
+
+  <main class="main">
+
+    <!-- ============ BERANDA ============ -->
+    <section class="page active" id="page-beranda">
+      <div class="status-bar">
+        <div class="streak-chip"><span class="flame">🔥</span><span id="streakCount">0</span> hari</div>
+        <div class="xp-wrap">
+          <div class="xp-track"><div class="xp-fill" id="xpFill" style="width:0%"></div></div>
+          <div class="xp-label" id="xpLabel">Level 1 · 0/100 XP</div>
+        </div>
+        <div class="level-chip">⭐ <span id="levelBadge">Lv.1</span></div>
+      </div>
+
+      <div class="mascot-card">
+        <div class="mascot-wrap" id="mascotWrap"><svg viewBox="0 0 100 100"><use id="mascotUse" href="#pig-happy"></use></svg></div>
+        <div class="bubble" id="mascotBubble">Halo! Aku Piko. Yuk mulai catat uang jajanmu hari ini~</div>
+      </div>
+
+      <div class="grid-cards">
+        <div class="card saldo"><div class="label">Sisa Uang</div><div class="value" id="statSaldo">Rp0</div></div>
+        <div class="card masuk"><div class="label">Uang Masuk</div><div class="value" id="statMasuk">Rp0</div></div>
+        <div class="card keluar"><div class="label">Uang Keluar</div><div class="value" id="statKeluar">Rp0</div></div>
+        <div class="card tabungan"><div class="label">Tabungan</div><div class="value" id="statTabungan">Rp0</div></div>
+      </div>
+
+      <div class="actions">
+        <button class="action-btn masuk" data-open="modalMasuk"><span class="emoji">💰</span>Uang Masuk</button>
+        <button class="action-btn keluar" data-open="modalKeluar"><span class="emoji">🛍️</span>Uang Keluar</button>
+        <button class="action-btn tabung" data-open="modalTabung"><span class="emoji">🏦</span>Tabung</button>
+      </div>
+
+      <div class="section-title">🎖️ Lencana</div>
+      <div class="badges-row" id="badgesRow"></div>
+
+      <div class="section-title">📜 Transaksi Terbaru</div>
+      <div id="recentList"></div>
+    </section>
+
+    <!-- ============ RINGKASAN ============ -->
+    <section class="page" id="page-ringkasan">
+      <h2>📊 Ringkasan</h2>
+      <div class="section-title">Pengeluaran per Kategori</div>
+      <div id="categoryBars"><div class="empty-state"><span class="em">🧾</span>Belum ada pengeluaran tercatat.</div></div>
+
+      <div class="section-title">🎯 Progres Tabungan</div>
+      <div class="bar-row">
+        <div class="brow-top"><span id="ringkasanSavedLabel">Rp0 terkumpul</span><span id="ringkasanTargetLabel">dari Rp0</span></div>
+        <div class="bar-track"><div class="bar-fill" id="ringkasanSaveBar" style="width:0%; background:var(--gold);"></div></div>
+      </div>
+
+      <div class="section-title">📅 Ringkasan Bulan Ini</div>
+      <div class="grid-cards" style="grid-template-columns:repeat(2,1fr);">
+        <div class="card masuk"><div class="label">Total Masuk</div><div class="value" id="bulanMasuk">Rp0</div></div>
+        <div class="card keluar"><div class="label">Total Keluar</div><div class="value" id="bulanKeluar">Rp0</div></div>
+      </div>
+    </section>
+
+    <!-- ============ RIWAYAT ============ -->
+    <section class="page" id="page-riwayat">
+      <h2>📜 Riwayat Transaksi</h2>
+      <div class="filter-tabs">
+        <button class="filter-tab active" data-filter="semua">Semua</button>
+        <button class="filter-tab" data-filter="hari">Hari Ini</button>
+        <button class="filter-tab" data-filter="minggu">Minggu Ini</button>
+        <button class="filter-tab" data-filter="bulan">Bulan Ini</button>
+      </div>
+      <div id="historyList"></div>
+    </section>
+
+    <!-- ============ TABUNGAN ============ -->
+    <section class="page" id="page-tabungan">
+      <h2>🏆 Tabungan</h2>
+      <div class="progress-hero">
+        <div class="target-amount" id="tabTargetAmount">Belum ada target</div>
+        <div class="sub" id="tabTargetSub">Set target biar Piko semangat nemenin nabung!</div>
+        <div class="ring-wrap">
+          <svg viewBox="0 0 150 150" width="150" height="150">
+            <circle cx="75" cy="75" r="64" stroke="#EFE9D8" stroke-width="14" fill="none"/>
+            <circle id="ringProgress" cx="75" cy="75" r="64" stroke="url(#ringGrad)" stroke-width="14" fill="none" stroke-linecap="round" stroke-dasharray="402" stroke-dashoffset="402"/>
+            <defs><linearGradient id="ringGrad" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#FFD873"/><stop offset="100%" stop-color="#F0A500"/></linearGradient></defs>
+          </svg>
+          <div class="ring-center">
+            <svg class="pig-mini" viewBox="0 0 100 100"><use href="#pig-happy"></use></svg>
+            <div class="pct" id="tabPct">0%</div>
+          </div>
+        </div>
+        <button class="btn primary tabung" id="btnSetTarget" style="max-width:220px; margin:0 auto;">🎯 Atur Target Tabungan</button>
+      </div>
+
+      <div class="section-title">🎖️ Lencana Pencapaian</div>
+      <div class="badges-row" id="badgesRowFull"></div>
+
+      <div class="section-title">📜 Riwayat Tabungan</div>
+      <div id="savingsHistory"></div>
+    </section>
+
+    <!-- ============ PENGATURAN ============ -->
+    <section class="page" id="page-pengaturan">
+      <h2>⚙️ Pengaturan</h2>
+
+      <div class="settings-item">
+        <div class="si-title">Batas Uang Jajan Harian</div>
+        <div class="si-sub">Piko akan mengingatkanmu jika pengeluaran hari ini lewat batas.</div>
+        <div class="field" style="margin-bottom:0;">
+          <input type="number" id="dailyLimitInput" placeholder="Contoh: 50000">
+        </div>
+      </div>
+
+      <div class="settings-item">
+        <div class="toggle">
+          <div>
+            <div class="si-title">Izinkan Saldo Minus</div>
+            <div class="si-sub">Jika aktif, transaksi tetap bisa dicatat walau saldo jadi minus.</div>
+          </div>
+          <label class="switch"><input type="checkbox" id="allowNegativeToggle"><span class="slider-tg"></span></label>
+        </div>
+      </div>
+
+      <div class="settings-item">
+        <div class="si-title">Cadangkan & Pulihkan Data</div>
+        <div class="si-sub">Simpan datamu jadi file, atau pulihkan dari file cadangan.</div>
+        <div class="settings-row-btns">
+          <button class="btn ghost" id="btnBackup">⬇️ Backup</button>
+          <button class="btn ghost" id="btnRestore">⬆️ Restore</button>
+          <input type="file" id="restoreFile" class="file-hidden" accept="application/json">
+        </div>
+      </div>
+
+      <div class="settings-item">
+        <div class="si-title">Hapus Semua Data</div>
+        <div class="si-sub">Tindakan ini tidak bisa dibatalkan. Semua transaksi, tabungan, dan progres akan hilang.</div>
+        <button class="btn danger" id="btnResetAll">🗑️ Hapus Semua Data</button>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<!-- BOTTOM NAV (mobile) -->
+<nav class="bottom-nav">
+  <button class="bnav-item active" data-page="beranda"><span class="ic">🏠</span>Beranda</button>
+  <button class="bnav-item" data-page="ringkasan"><span class="ic">📊</span>Ringkasan</button>
+  <button class="bnav-item" data-page="riwayat"><span class="ic">📜</span>Riwayat</button>
+  <button class="bnav-item" data-page="tabungan"><span class="ic">🏆</span>Tabungan</button>
+  <button class="bnav-item" data-page="pengaturan"><span class="ic">⚙️</span>Atur</button>
+</nav>
+
+<!-- ============ MODAL: UANG MASUK ============ -->
+<div class="overlay" id="modalMasuk">
+  <div class="modal">
+    <h3>💰 Catat Uang Masuk</h3>
+    <div class="field"><label>Jumlah (Rp)</label><input type="number" id="masukAmount" placeholder="0" inputmode="numeric"></div>
+    <div class="field"><label>Sumber</label><input type="text" id="masukNote" placeholder="Misal: Uang saku, hadiah, dll"></div>
+    <div class="modal-actions">
+      <button class="btn ghost" data-close>Batal</button>
+      <button class="btn primary" id="submitMasuk">Simpan</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============ MODAL: UANG KELUAR ============ -->
+<div class="overlay" id="modalKeluar">
+  <div class="modal">
+    <h3>🛍️ Catat Uang Keluar</h3>
+    <div class="field"><label>Jumlah (Rp)</label><input type="number" id="keluarAmount" placeholder="0" inputmode="numeric"></div>
+    <div class="field">
+      <label>Kategori</label>
+      <div class="cat-grid" id="catGrid"></div>
+    </div>
+    <div class="field"><label>Catatan (opsional)</label><input type="text" id="keluarNote" placeholder="Misal: Bakso di kantin"></div>
+    <div id="keluarWarnArea"></div>
+    <div class="modal-actions">
+      <button class="btn ghost" data-close>Batal</button>
+      <button class="btn primary keluar" id="submitKeluar">Simpan</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============ MODAL: TABUNG ============ -->
+<div class="overlay" id="modalTabung">
+  <div class="modal">
+    <h3>🏦 Tabung Uang</h3>
+    <div class="field"><label>Jumlah (Rp)</label><input type="number" id="tabungAmount" placeholder="0" inputmode="numeric"></div>
+    <div class="field"><label>Catatan (opsional)</label><input type="text" id="tabungNote" placeholder="Misal: Nabung buat sepatu"></div>
+    <div class="modal-actions">
+      <button class="btn ghost" data-close>Batal</button>
+      <button class="btn primary tabung" id="submitTabung">Tabung Sekarang</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============ MODAL: SET TARGET ============ -->
+<div class="overlay" id="modalTarget">
+  <div class="modal">
+    <h3>🎯 Atur Target Tabungan</h3>
+    <div class="field"><label>Nama Target</label><input type="text" id="targetName" placeholder="Misal: Sepatu baru"></div>
+    <div class="field"><label>Jumlah Target (Rp)</label><input type="number" id="targetAmount" placeholder="0" inputmode="numeric"></div>
+    <div class="modal-actions">
+      <button class="btn ghost" data-close>Batal</button>
+      <button class="btn primary tabung" id="submitTarget">Simpan Target</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============ MODAL: EDIT TRANSAKSI ============ -->
+<div class="overlay" id="modalEdit">
+  <div class="modal">
+    <h3>✏️ Edit Transaksi</h3>
+    <div class="field"><label>Jumlah (Rp)</label><input type="number" id="editAmount"></div>
+    <div class="field"><label>Catatan</label><input type="text" id="editNote"></div>
+    <div class="modal-actions">
+      <button class="btn ghost" data-close>Batal</button>
+      <button class="btn primary" id="submitEdit">Simpan Perubahan</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============ MODAL: KONFIRMASI HAPUS ============ -->
+<div class="overlay" id="modalConfirmDelete">
+  <div class="modal">
+    <h3>🗑️ Hapus Transaksi?</h3>
+    <p style="font-weight:700; color:#8a8368; font-size:14px;">Transaksi ini akan dihapus permanen dan saldo akan disesuaikan.</p>
+    <div class="modal-actions">
+      <button class="btn ghost" data-close>Batal</button>
+      <button class="btn danger" id="confirmDeleteBtn">Ya, Hapus</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============ MODAL: KONFIRMASI RESET ============ -->
+<div class="overlay" id="modalConfirmReset1">
+  <div class="modal">
+    <h3>⚠️ Yakin Hapus Semua Data?</h3>
+    <p style="font-weight:700; color:#8a8368; font-size:14px;">Semua transaksi, tabungan, XP, dan lencana akan hilang selamanya.</p>
+    <div class="modal-actions">
+      <button class="btn ghost" data-close>Batal</button>
+      <button class="btn danger" id="toConfirmReset2">Lanjutkan</button>
+    </div>
+  </div>
+</div>
+<div class="overlay" id="modalConfirmReset2">
+  <div class="modal">
+    <h3>🚨 Konfirmasi Terakhir</h3>
+    <p style="font-weight:700; color:#8a8368; font-size:14px;">Ketik <b>HAPUS</b> untuk memastikan kamu benar-benar yakin.</p>
+    <div class="field"><input type="text" id="resetConfirmInput" placeholder="Ketik HAPUS"></div>
+    <div class="modal-actions">
+      <button class="btn ghost" data-close>Batal</button>
+      <button class="btn danger" id="finalResetBtn">Hapus Selamanya</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============ TROPHY CELEBRATION ============ -->
+<div class="trophy-overlay" id="trophyOverlay">
+  <div class="trophy-card">
+    <div class="ticon">🏆</div>
+    <h2 id="trophyTitle">Target Tercapai!</h2>
+    <p id="trophyDesc">Kamu berhasil mencapai target tabunganmu. Piko bangga banget!</p>
+    <button class="btn primary tabung" id="closeTrophy">Asyiiik! 🎉</button>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<!-- SVG mascot defs -->
+<svg width="0" height="0" style="position:absolute">
+  <defs>
+    <g id="pig-face">
+      <circle cx="50" cy="52" r="40" fill="#FFC7BE"/>
+      <ellipse cx="50" cy="60" rx="16" ry="12" fill="#FF9C8E"/>
+      <circle cx="43" cy="58" r="2.5" fill="#7A3B32"/>
+      <circle cx="57" cy="58" r="2.5" fill="#7A3B32"/>
+      <ellipse cx="26" cy="34" rx="10" ry="9" fill="#FFC7BE"/>
+      <ellipse cx="74" cy="34" rx="10" ry="9" fill="#FFC7BE"/>
+    </g>
+    <g id="pig-happy">
+      <ellipse cx="50" cy="80" rx="8" ry="4" fill="#00000010"/>
+      <ellipse cx="26" cy="30" rx="12" ry="11" fill="#FFC7BE"/>
+      <ellipse cx="74" cy="30" rx="12" ry="11" fill="#FFC7BE"/>
+      <ellipse cx="26" cy="31" rx="6" ry="5.5" fill="#FF9C8E"/>
+      <ellipse cx="74" cy="31" rx="6" ry="5.5" fill="#FF9C8E"/>
+      <circle cx="50" cy="50" r="38" fill="#FFC7BE"/>
+      <path d="M18 45 Q10 30 25 22 Q30 32 30 40 Z" fill="#FFC7BE"/>
+      <circle cx="34" cy="45" r="4.5" fill="#3A2118"/>
+      <circle cx="66" cy="45" r="4.5" fill="#3A2118"/>
+      <circle cx="35.5" cy="43" r="1.4" fill="white"/>
+      <circle cx="67.5" cy="43" r="1.4" fill="white"/>
+      <ellipse cx="50" cy="58" rx="15" ry="11" fill="#FF9C8E"/>
+      <ellipse cx="44" cy="58" rx="2.6" ry="3.4" fill="#C97062"/>
+      <ellipse cx="56" cy="58" rx="2.6" ry="3.4" fill="#C97062"/>
+      <path d="M38 68 Q50 76 62 68" stroke="#C97062" stroke-width="3" fill="none" stroke-linecap="round"/>
+      <ellipse cx="26" cy="60" rx="6" ry="4" fill="#FF9C8E" opacity="0.7"/>
+      <ellipse cx="74" cy="60" rx="6" ry="4" fill="#FF9C8E" opacity="0.7"/>
+    </g>
+    <g id="pig-worried">
+      <ellipse cx="26" cy="30" rx="12" ry="11" fill="#FFC7BE"/>
+      <ellipse cx="74" cy="30" rx="12" ry="11" fill="#FFC7BE"/>
+      <ellipse cx="26" cy="31" rx="6" ry="5.5" fill="#FF9C8E"/>
+      <ellipse cx="74" cy="31" rx="6" ry="5.5" fill="#FF9C8E"/>
+      <circle cx="50" cy="50" r="38" fill="#FFDDD3"/>
+      <ellipse cx="34" cy="47" rx="4.5" ry="5.5" fill="#3A2118"/>
+      <ellipse cx="66" cy="47" rx="4.5" ry="5.5" fill="#3A2118"/>
+      <path d="M27 40 Q34 34 40 40" stroke="#3A2118" stroke-width="2.4" fill="none" stroke-linecap="round"/>
+      <path d="M60 40 Q66 34 73 40" stroke="#3A2118" stroke-width="2.4" fill="none" stroke-linecap="round"/>
+      <ellipse cx="50" cy="60" rx="14" ry="10" fill="#FF9C8E"/>
+      <ellipse cx="44" cy="60" rx="2.4" ry="3" fill="#C97062"/>
+      <ellipse cx="56" cy="60" rx="2.4" ry="3" fill="#C97062"/>
+      <path d="M40 72 Q50 66 60 72" stroke="#C97062" stroke-width="3" fill="none" stroke-linecap="round"/>
+    </g>
+    <g id="pig-excited">
+      <ellipse cx="26" cy="28" rx="12" ry="11" fill="#FFC7BE"/>
+      <ellipse cx="74" cy="28" rx="12" ry="11" fill="#FFC7BE"/>
+      <ellipse cx="26" cy="29" rx="6" ry="5.5" fill="#FF9C8E"/>
+      <ellipse cx="74" cy="29" rx="6" ry="5.5" fill="#FF9C8E"/>
+      <circle cx="50" cy="50" r="38" fill="#FFC7BE"/>
+      <path d="M27 44 Q34 36 41 44" stroke="#3A2118" stroke-width="3" fill="none" stroke-linecap="round"/>
+      <path d="M59 44 Q66 36 73 44" stroke="#3A2118" stroke-width="3" fill="none" stroke-linecap="round"/>
+      <ellipse cx="50" cy="58" rx="15" ry="11" fill="#FF9C8E"/>
+      <ellipse cx="44" cy="58" rx="2.6" ry="3.4" fill="#C97062"/>
+      <ellipse cx="56" cy="58" rx="2.6" ry="3.4" fill="#C97062"/>
+      <ellipse cx="50" cy="72" rx="10" ry="8" fill="#7A3B32"/>
+      <ellipse cx="26" cy="58" rx="7" ry="5" fill="#FF9C8E" opacity="0.8"/>
+      <ellipse cx="74" cy="58" rx="7" ry="5" fill="#FF9C8E" opacity="0.8"/>
+    </g>
+  </defs>
+</svg>
+
+<script>
+(function(){
+  "use strict";
+
+  /* ================= DATA MODEL ================= */
+  const STORE_KEY = 'uangJajanState_v1';
+  const CATEGORIES = [
+    {id:'makanan', label:'Makanan', icon:'🍔'},
+    {id:'transport', label:'Transport', icon:'🚌'},
+    {id:'jajan', label:'Jajan', icon:'🍿'},
+    {id:'hiburan', label:'Hiburan', icon:'🎮'},
+    {id:'belanja', label:'Belanja', icon:'🛒'},
+    {id:'lainnya', label:'Lainnya', icon:'📦'},
+  ];
+  const BADGE_DEFS = [
+    {id:'first_save', icon:'🌱', name:'Nabung Pertama', check: s => s.savings.history.some(h=>h.type==='setor')},
+    {id:'streak7', icon:'🔥', name:'Streak 7 Hari', check: s => s.gami.streak >= 7},
+    {id:'streak30', icon:'🌟', name:'Streak 30 Hari', check: s => s.gami.streak >= 30},
+    {id:'tx50', icon:'📚', name:'Rajin Mencatat', check: s => s.transactions.length >= 50},
+    {id:'level5', icon:'🚀', name:'Level 5', check: s => levelFromXp(s.gami.xp).level >= 5},
+    {id:'target_hit', icon:'🏆', name:'Target Tercapai', check: s => s.gami.trophiesWon >= 1},
+  ];
+
+  function defaultState(){
+    return {
+      transactions: [], // {id,type:'masuk'|'keluar',amount,category,note,date}
+      savings: {
+        target: 0,
+        name: '',
+        saved: 0,
+        history: [] // {id,type:'setor'|'tarik',amount,note,date}
+      },
+      settings: {
+        dailyLimit: null,
+        allowNegative: false
+      },
+      gami: {
+        xp: 0,
+        streak: 0,
+        lastActiveDate: null,
+        trophiesWon: 0,
+        badgesEarned: []
+      }
+    };
+  }
+
+  let state = loadState();
+
+  function loadState(){
+    try{
+      const raw = localStorage.getItem(STORE_KEY);
+      if(!raw) return defaultState();
+      const parsed = JSON.parse(raw);
+      const d = defaultState();
+      return Object.assign(d, parsed, {
+        savings: Object.assign(d.savings, parsed.savings||{}),
+        settings: Object.assign(d.settings, parsed.settings||{}),
+        gami: Object.assign(d.gami, parsed.gami||{})
+      });
+    }catch(e){ return defaultState(); }
+  }
+  function saveState(){
+    localStorage.setItem(STORE_KEY, JSON.stringify(state));
+  }
+
+  /* ================= HELPERS ================= */
+  function formatRupiah(n){
+    n = Math.round(n||0);
+    const neg = n < 0;
+    n = Math.abs(n);
+    const s = n.toLocaleString('id-ID');
+    return (neg?'-':'') + 'Rp' + s;
+  }
+  function uid(){ return Date.now().toString(36) + Math.random().toString(36).slice(2,7); }
+  function todayStr(){ return new Date().toISOString().slice(0,10); }
+  function isSameDay(dateStr, ref){ return dateStr.slice(0,10) === ref; }
+  function isThisWeek(dateStr){
+    const d = new Date(dateStr);
+    const now = new Date();
+    const start = new Date(now); start.setDate(now.getDate() - now.getDay()); start.setHours(0,0,0,0);
+    return d >= start;
+  }
+  function isThisMonth(dateStr){
+    const d = new Date(dateStr); const now = new Date();
+    return d.getFullYear()===now.getFullYear() && d.getMonth()===now.getMonth();
+  }
+  function levelFromXp(xp){
+    // simple curve: each level needs level*100 xp cumulatively increasing
+    let level = 1, need = 100, acc = 0;
+    while(xp >= acc + need){
+      acc += need; level++; need = 100 + (level-1)*40;
+    }
+    return {level, curXp: xp-acc, needXp: need};
+  }
+  function totals(){
+    let masuk=0, keluar=0;
+    state.transactions.forEach(t=>{
+      if(t.type==='masuk') masuk += t.amount;
+      if(t.type==='keluar') keluar += t.amount;
+    });
+    const saldo = masuk - keluar;
+    return {masuk, keluar, saldo, tabungan: state.savings.saved};
+  }
+
+  /* ================= GAMIFICATION ================= */
+  function addXp(amount){
+    state.gami.xp += amount;
+    const today = todayStr();
+    if(state.gami.lastActiveDate !== today){
+      const last = state.gami.lastActiveDate;
+      if(last){
+        const diffDays = Math.round((new Date(today) - new Date(last))/86400000);
+        if(diffDays === 1) state.gami.streak += 1;
+        else if(diffDays > 1) state.gami.streak = 1;
+      } else {
+        state.gami.streak = 1;
+      }
+      state.gami.lastActiveDate = today;
+    }
+    checkBadges();
+  }
+  function checkBadges(){
+    BADGE_DEFS.forEach(b=>{
+      if(!state.gami.badgesEarned.includes(b.id) && b.check(state)){
+        state.gami.badgesEarned.push(b.id);
+      }
+    });
+  }
+
+  /* ================= RENDER: STATUS BAR / MASCOT ================= */
+  function renderStatus(){
+    const {level, curXp, needXp} = levelFromXp(state.gami.xp);
+    document.getElementById('xpFill').style.width = Math.min(100, (curXp/needXp)*100) + '%';
+    document.getElementById('xpLabel').textContent = `Level ${level} · ${curXp}/${needXp} XP`;
+    document.getElementById('levelBadge').textContent = 'Lv.' + level;
+    document.getElementById('streakCount').textContent = state.gami.streak;
+  }
+
+  function renderMascot(){
+    const t = totals();
+    const use = document.getElementById('mascotUse');
+    const bubble = document.getElementById('mascotBubble');
+    let mood = 'pig-happy', msg = 'Semangat nabung hari ini! 💪';
+
+    const dl = state.settings.dailyLimit;
+    let spentToday = 0;
+    state.transactions.forEach(tx=>{
+      if(tx.type==='keluar' && isSameDay(tx.date, todayStr())) spentToday += tx.amount;
+    });
+
+    if(t.saldo < 0){
+      mood = 'pig-worried';
+      msg = 'Waduh, saldomu minus nih. Yuk cek pengeluaranmu~';
+    } else if(dl && spentToday > dl){
+      mood = 'pig-worried';
+      msg = `Kamu sudah lewat batas harian (${formatRupiah(dl)}). Pelan-pelan ya~`;
+    } else if(state.savings.target > 0 && state.savings.saved >= state.savings.target){
+      mood = 'pig-excited';
+      msg = 'Target tabunganmu tercapai! Aku bangga sama kamu! 🎉';
+    } else if(state.gami.streak >= 3){
+      mood = 'pig-excited';
+      msg = `Mantap, streak ${state.gami.streak} hari! Terus catat ya~`;
+    } else if(state.transactions.length === 0){
+      mood = 'pig-happy';
+      msg = 'Halo! Aku Piko. Yuk mulai catat uang jajanmu hari ini~';
+    } else {
+      const msgs = [
+        'Catatan rapi bikin dompet happy 😊',
+        'Konsisten sedikit demi sedikit, ya!',
+        'Sisa uangmu masih aman kok~',
+        'Yuk nabung sedikit lagi hari ini?'
+      ];
+      msg = msgs[Math.floor(Math.random()*msgs.length)];
+    }
+    use.setAttribute('href', '#'+mood);
+    bubble.textContent = msg;
+  }
+
+  function bounceMascot(){
+    const el = document.getElementById('mascotWrap');
+    el.style.transition = 'transform .15s ease';
+    el.style.transform = 'scale(1.15) rotate(-4deg)';
+    setTimeout(()=>{ el.style.transform = 'scale(1) rotate(0deg)'; }, 220);
+  }
+
+  /* ================= RENDER: BERANDA ================= */
+  function renderBeranda(){
+    const t = totals();
+    document.getElementById('statSaldo').textContent = formatRupiah(t.saldo);
+    document.getElementById('statMasuk').textContent = formatRupiah(t.masuk);
+    document.getElementById('statKeluar').textContent = formatRupiah(t.keluar);
+    document.getElementById('statTabungan').textContent = formatRupiah(t.tabungan);
+    renderMascot();
+    renderStatus();
+    renderBadges('badgesRow', true);
+    renderRecent();
+  }
+
+  function txIcon(tx){
+    if(tx.type==='masuk') return {ic:'💰', cls:'masuk'};
+    if(tx.type==='tabung') return {ic:'🏦', cls:'tabung'};
+    const cat = CATEGORIES.find(c=>c.id===tx.category);
+    return {ic: cat?cat.icon:'🛍️', cls:'keluar'};
+  }
+  function txAmountClass(tx){
+    if(tx.type==='masuk') return 'plus';
+    if(tx.type==='tabung') return 'save';
+    return 'minus';
+  }
+  function txSign(tx){
+    if(tx.type==='masuk') return '+';
+    if(tx.type==='tabung') return '';
+    return '-';
+  }
+  function txTitle(tx){
+    if(tx.type==='masuk') return tx.note || 'Uang Masuk';
+    if(tx.type==='tabung') return 'Menabung' + (tx.note?': '+tx.note:'');
+    const cat = CATEGORIES.find(c=>c.id===tx.category);
+    return (cat?cat.label:'Pengeluaran') + (tx.note?' · '+tx.note:'');
+  }
+  function fmtDate(dateStr){
+    const d = new Date(dateStr);
+    return d.toLocaleDateString('id-ID', {day:'numeric', month:'short', hour:'2-digit', minute:'2-digit'});
+  }
+
+  function txItemHtml(tx, editable){
+    const {ic, cls} = txIcon(tx);
+    return `<div class="tx-item" data-id="${tx.id}">
+      <div class="tx-icon ${cls}">${ic}</div>
+      <div class="tx-info">
+        <div class="tx-title">${escapeHtml(txTitle(tx))}</div>
+        <div class="tx-sub">${fmtDate(tx.date)}</div>
+      </div>
+      <div class="tx-amount ${txAmountClass(tx)}">${txSign(tx)}${formatRupiah(tx.amount)}</div>
+      ${editable? `<div class="tx-actions">
+        <button class="icon-btn" data-edit="${tx.id}">✏️</button>
+        <button class="icon-btn" data-del="${tx.id}">🗑️</button>
+      </div>` : ''}
+    </div>`;
+  }
+  function escapeHtml(s){
+    return (s||'').replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  }
+
+  function renderRecent(){
+    const list = [...state.transactions].sort((a,b)=> new Date(b.date)-new Date(a.date)).slice(0,5);
+    const el = document.getElementById('recentList');
+    if(list.length===0){
+      el.innerHTML = `<div class="empty-state"><span class="em">🐷</span>Belum ada transaksi. Yuk mulai catat!</div>`;
+      return;
+    }
+    el.innerHTML = list.map(tx=>txItemHtml(tx,false)).join('');
+  }
+
+  function renderBadges(containerId, compact){
+    const el = document.getElementById(containerId);
+    if(!el) return;
+    el.innerHTML = BADGE_DEFS.map(b=>{
+      const earned = state.gami.badgesEarned.includes(b.id);
+      return `<div class="badge ${earned?'':'locked'}">
+        <div class="bicon">${b.icon}</div>
+        <div class="bname">${b.name}</div>
+      </div>`;
+    }).join('');
+  }
+
+  /* ================= RENDER: RIWAYAT ================= */
+  let currentFilter = 'semua';
+  function renderRiwayat(){
+    let list = [...state.transactions];
+    if(currentFilter==='hari') list = list.filter(t=>isSameDay(t.date, todayStr()));
+    if(currentFilter==='minggu') list = list.filter(t=>isThisWeek(t.date));
+    if(currentFilter==='bulan') list = list.filter(t=>isThisMonth(t.date));
+    list.sort((a,b)=> new Date(b.date)-new Date(a.date));
+    const el = document.getElementById('historyList');
+    if(list.length===0){
+      el.innerHTML = `<div class="empty-state"><span class="em">🔍</span>Tidak ada transaksi di periode ini.</div>`;
+      return;
+    }
+    el.innerHTML = list.map(tx=>txItemHtml(tx,true)).join('');
+  }
+
+  /* ================= RENDER: RINGKASAN ================= */
+  function renderRingkasan(){
+    const byCat = {};
+    state.transactions.forEach(tx=>{
+      if(tx.type==='keluar'){
+        byCat[tx.category] = (byCat[tx.category]||0) + tx.amount;
+      }
+    });
+    const total = Object.values(byCat).reduce((a,b)=>a+b,0);
+    const el = document.getElementById('categoryBars');
+    if(total===0){
+      el.innerHTML = `<div class="empty-state"><span class="em">🧾</span>Belum ada pengeluaran tercatat.</div>`;
+    } else {
+      const colors = ['#FF6B5E','#FFC64B','#2ECC71','#3D5A80','#B57EDC','#4DB6AC'];
+      el.innerHTML = CATEGORIES.filter(c=>byCat[c.id]).sort((a,b)=>byCat[b.id]-byCat[a.id]).map((c,i)=>{
+        const val = byCat[c.id];
+        const pct = Math.round((val/total)*100);
+        return `<div class="bar-row">
+          <div class="brow-top"><span>${c.icon} ${c.label}</span><span>${formatRupiah(val)} (${pct}%)</span></div>
+          <div class="bar-track"><div class="bar-fill" style="width:${pct}%; background:${colors[i%colors.length]}"></div></div>
+        </div>`;
+      }).join('');
+    }
+
+    const sv = state.savings;
+    const svPct = sv.target>0 ? Math.min(100, Math.round((sv.saved/sv.target)*100)) : 0;
+    document.getElementById('ringkasanSavedLabel').textContent = formatRupiah(sv.saved) + ' terkumpul';
+    document.getElementById('ringkasanTargetLabel').textContent = 'dari ' + formatRupiah(sv.target);
+    document.getElementById('ringkasanSaveBar').style.width = svPct + '%';
+
+    let bMasuk=0, bKeluar=0;
+    state.transactions.forEach(t=>{
+      if(!isThisMonth(t.date)) return;
+      if(t.type==='masuk') bMasuk += t.amount;
+      if(t.type==='keluar') bKeluar += t.amount;
+    });
+    document.getElementById('bulanMasuk').textContent = formatRupiah(bMasuk);
+    document.getElementById('bulanKeluar').textContent = formatRupiah(bKeluar);
+  }
+
+  /* ================= RENDER: TABUNGAN ================= */
+  function renderTabungan(){
+    const sv = state.savings;
+    const pct = sv.target>0 ? Math.min(100, (sv.saved/sv.target)*100) : 0;
+    document.getElementById('tabTargetAmount').textContent = sv.target>0
+      ? (sv.name? sv.name+' — ' : '') + formatRupiah(sv.saved) + ' / ' + formatRupiah(sv.target)
+      : 'Belum ada target';
+    document.getElementById('tabTargetSub').textContent = sv.target>0
+      ? (pct>=100 ? 'Target tercapai! Kamu keren! 🎉' : 'Terus semangat, sedikit lagi!')
+      : 'Set target biar Piko semangat nemenin nabung!';
+    document.getElementById('tabPct').textContent = Math.round(pct)+'%';
+    const circumference = 402;
+    const offset = circumference - (circumference * pct/100);
+    document.getElementById('ringProgress').style.strokeDashoffset = offset;
+
+    renderBadges('badgesRowFull', false);
+
+    const list = [...sv.history].sort((a,b)=> new Date(b.date)-new Date(a.date));
+    const el = document.getElementById('savingsHistory');
+    if(list.length===0){
+      el.innerHTML = `<div class="empty-state"><span class="em">🏦</span>Belum ada riwayat tabungan.</div>`;
+      return;
+    }
+    el.innerHTML = list.map(h=>`<div class="tx-item">
+      <div class="tx-icon tabung">🏦</div>
+      <div class="tx-info">
+        <div class="tx-title">${h.type==='setor'?'Setor':'Tarik'} Tabungan${h.note? ' · '+escapeHtml(h.note):''}</div>
+        <div class="tx-sub">${fmtDate(h.date)}</div>
+      </div>
+      <div class="tx-amount save">${h.type==='setor'?'+':'-'}${formatRupiah(h.amount)}</div>
+    </div>`).join('');
+  }
+
+  /* ================= RENDER ALL ================= */
+  function renderAll(){
+    renderBeranda();
+    renderRiwayat();
+    renderRingkasan();
+    renderTabungan();
+    document.getElementById('dailyLimitInput').value = state.settings.dailyLimit || '';
+    document.getElementById('allowNegativeToggle').checked = !!state.settings.allowNegative;
+  }
+
+  /* ================= NAV ================= */
+  function goPage(name){
+    document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+    document.getElementById('page-'+name).classList.add('active');
+    document.querySelectorAll('.navlink').forEach(b=>b.classList.toggle('active', b.dataset.page===name));
+    document.querySelectorAll('.bnav-item').forEach(b=>b.classList.toggle('active', b.dataset.page===name));
+    window.scrollTo({top:0, behavior:'smooth'});
+  }
+  document.querySelectorAll('[data-page]').forEach(btn=>{
+    btn.addEventListener('click', ()=>goPage(btn.dataset.page));
+  });
+
+  /* ================= MODALS ================= */
+  function openModal(id){ document.getElementById(id).classList.add('open'); }
+  function closeModal(id){ document.getElementById(id).classList.remove('open'); }
+  document.querySelectorAll('[data-open]').forEach(btn=>{
+    btn.addEventListener('click', ()=>openModal(btn.dataset.open));
+  });
+  document.querySelectorAll('[data-close]').forEach(btn=>{
+    btn.addEventListener('click', (e)=>{
+      const overlay = e.target.closest('.overlay');
+      overlay.classList.remove('open');
+    });
+  });
+  document.querySelectorAll('.overlay').forEach(ov=>{
+    ov.addEventListener('click', (e)=>{ if(e.target===ov) ov.classList.remove('open'); });
+  });
+
+  let toastTimer;
+  function showToast(msg){
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(()=>t.classList.remove('show'), 2200);
+  }
+
+  /* ---- category grid in Keluar modal ---- */
+  let selectedCat = CATEGORIES[0].id;
+  function renderCatGrid(){
+    const grid = document.getElementById('catGrid');
+    grid.innerHTML = CATEGORIES.map(c=>`<button type="button" class="cat-pick ${c.id===selectedCat?'sel':''}" data-cat="${c.id}">
+      <span class="ce">${c.icon}</span>${c.label}
+    </button>`).join('');
+    grid.querySelectorAll('.cat-pick').forEach(btn=>{
+      btn.addEventListener('click', ()=>{ selectedCat = btn.dataset.cat; renderCatGrid(); });
+    });
+  }
+  renderCatGrid();
+
+  /* ---- submit: Uang Masuk ---- */
+  document.getElementById('submitMasuk').addEventListener('click', ()=>{
+    const amount = parseFloat(document.getElementById('masukAmount').value);
+    const note = document.getElementById('masukNote').value.trim();
+    if(!amount || amount<=0){ showToast('Isi jumlah yang valid dulu ya~'); return; }
+    state.transactions.push({id:uid(), type:'masuk', amount, category:null, note, date:new Date().toISOString()});
+    addXp(10);
+    saveState();
+    document.getElementById('masukAmount').value=''; document.getElementById('masukNote').value='';
+    closeModal('modalMasuk');
+    bounceMascot();
+    showToast('Uang masuk tercatat! +10 XP ✨');
+    renderAll();
+  });
+
+  /* ---- submit: Uang Keluar ---- */
+  document.getElementById('keluarAmount').addEventListener('input', checkKeluarWarn);
+  function checkKeluarWarn(){
+    const amount = parseFloat(document.getElementById('keluarAmount').value) || 0;
+    const t = totals();
+    const area = document.getElementById('keluarWarnArea');
+    if(amount > 0 && (t.saldo - amount) < 0){
+      area.innerHTML = `<div class="warn-box">⚠️ <div>Transaksi ini akan membuat saldo minus (${formatRupiah(t.saldo-amount)}).
+        ${state.settings.allowNegative ? 'Tetap akan dicatat karena kamu sudah mengizinkan saldo minus di Pengaturan.' : 'Aktifkan "Izinkan Saldo Minus" di Pengaturan bila ingin tetap mencatatnya.'}</div></div>`;
+    } else {
+      area.innerHTML = '';
+    }
+  }
+  document.getElementById('submitKeluar').addEventListener('click', ()=>{
+    const amount = parseFloat(document.getElementById('keluarAmount').value);
+    const note = document.getElementById('keluarNote').value.trim();
+    if(!amount || amount<=0){ showToast('Isi jumlah yang valid dulu ya~'); return; }
+    const t = totals();
+    if((t.saldo - amount) < 0 && !state.settings.allowNegative){
+      showToast('Saldo tidak cukup. Aktifkan izin saldo minus di Pengaturan bila perlu.');
+      return;
+    }
+    state.transactions.push({id:uid(), type:'keluar', amount, category:selectedCat, note, date:new Date().toISOString()});
+    addXp(10);
+    saveState();
+    document.getElementById('keluarAmount').value=''; document.getElementById('keluarNote').value='';
+    document.getElementById('keluarWarnArea').innerHTML='';
+    closeModal('modalKeluar');
+    bounceMascot();
+    showToast('Uang keluar tercatat. +10 XP');
+    renderAll();
+  });
+
+  /* ---- submit: Tabung ---- */
+  document.getElementById('submitTabung').addEventListener('click', ()=>{
+    const amount = parseFloat(document.getElementById('tabungAmount').value);
+    const note = document.getElementById('tabungNote').value.trim();
+    if(!amount || amount<=0){ showToast('Isi jumlah yang valid dulu ya~'); return; }
+    const t = totals();
+    if((t.saldo - amount) < 0 && !state.settings.allowNegative){
+      showToast('Saldo tidak cukup untuk menabung sebesar itu.');
+      return;
+    }
+    state.transactions.push({id:uid(), type:'tabung', amount, category:null, note, date:new Date().toISOString()});
+    state.savings.saved += amount;
+    state.savings.history.push({id:uid(), type:'setor', amount, note, date:new Date().toISOString()});
+    addXp(25);
+    const wasBelow = true;
+    const reachedNow = state.savings.target>0 && state.savings.saved >= state.savings.target;
+    saveState();
+    document.getElementById('tabungAmount').value=''; document.getElementById('tabungNote').value='';
+    closeModal('modalTabung');
+    bounceMascot();
+    if(reachedNow){
+      celebrateTrophy();
+    } else {
+      showToast('Mantap, nabung berhasil! +25 XP 🏦');
+    }
+    renderAll();
+  });
+
+  function celebrateTrophy(){
+    state.gami.trophiesWon += 1;
+    state.gami.xp += 100;
+    checkBadges();
+    saveState();
+    document.getElementById('trophyTitle').textContent = 'Target Tercapai! 🏆';
+    document.getElementById('trophyDesc').textContent = (state.savings.name? `"${state.savings.name}" ` : '') + 'berhasil kamu capai! +100 XP bonus dari Piko!';
+    document.getElementById('trophyOverlay').classList.add('open');
+    launchConfetti();
+    renderAll();
+  }
+  document.getElementById('closeTrophy').addEventListener('click', ()=>{
+    document.getElementById('trophyOverlay').classList.remove('open');
+  });
+
+  /* ---- submit: Set Target ---- */
+  document.getElementById('btnSetTarget').addEventListener('click', ()=>{
+    document.getElementById('targetName').value = state.savings.name || '';
+    document.getElementById('targetAmount').value = state.savings.target || '';
+    openModal('modalTarget');
+  });
+  document.getElementById('submitTarget').addEventListener('click', ()=>{
+    const name = document.getElementById('targetName').value.trim();
+    const amount = parseFloat(document.getElementById('targetAmount').value);
+    if(!amount || amount<=0){ showToast('Isi target yang valid dulu ya~'); return; }
+    state.savings.name = name;
+    state.savings.target = amount;
+    saveState();
+    closeModal('modalTarget');
+    showToast('Target tabungan disimpan! 🎯');
+    renderAll();
+  });
+
+  /* ---- edit / delete transaksi ---- */
+  let editingId = null, deletingId = null;
+  document.addEventListener('click', (e)=>{
+    const editBtn = e.target.closest('[data-edit]');
+    const delBtn = e.target.closest('[data-del]');
+    if(editBtn){
+      editingId = editBtn.dataset.edit;
+      const tx = state.transactions.find(t=>t.id===editingId);
+      if(!tx) return;
+      document.getElementById('editAmount').value = tx.amount;
+      document.getElementById('editNote').value = tx.note || '';
+      openModal('modalEdit');
+    }
+    if(delBtn){
+      deletingId = delBtn.dataset.del;
+      openModal('modalConfirmDelete');
+    }
+  });
+  document.getElementById('submitEdit').addEventListener('click', ()=>{
+    const tx = state.transactions.find(t=>t.id===editingId);
+    if(!tx) return;
+    const newAmount = parseFloat(document.getElementById('editAmount').value);
+    if(!newAmount || newAmount<=0){ showToast('Jumlah tidak valid.'); return; }
+    tx.amount = newAmount;
+    tx.note = document.getElementById('editNote').value.trim();
+    saveState();
+    closeModal('modalEdit');
+    showToast('Transaksi diperbarui.');
+    renderAll();
+  });
+  document.getElementById('confirmDeleteBtn').addEventListener('click', ()=>{
+    const idx = state.transactions.findIndex(t=>t.id===deletingId);
+    if(idx>-1){
+      const tx = state.transactions[idx];
+      if(tx.type==='tabung'){
+        state.savings.saved -= tx.amount;
+        const hIdx = state.savings.history.findIndex(h=>h.note===tx.note && h.amount===tx.amount);
+        if(hIdx>-1) state.savings.history.splice(hIdx,1);
+      }
+      state.transactions.splice(idx,1);
+      saveState();
+    }
+    closeModal('modalConfirmDelete');
+    showToast('Transaksi dihapus.');
+    renderAll();
+  });
+
+  /* ---- settings ---- */
+  document.getElementById('dailyLimitInput').addEventListener('change', (e)=>{
+    const v = parseFloat(e.target.value);
+    state.settings.dailyLimit = v>0 ? v : null;
+    saveState();
+    showToast('Batas harian disimpan.');
+    renderAll();
+  });
+  document.getElementById('allowNegativeToggle').addEventListener('change', (e)=>{
+    state.settings.allowNegative = e.target.checked;
+    saveState();
+  });
+
+  document.getElementById('btnBackup').addEventListener('click', ()=>{
+    const blob = new Blob([JSON.stringify(state, null, 2)], {type:'application/json'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = 'backup-uang-jajan-'+todayStr()+'.json';
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    showToast('Backup berhasil diunduh.');
+  });
+  document.getElementById('btnRestore').addEventListener('click', ()=>{
+    document.getElementById('restoreFile').click();
+  });
+  document.getElementById('restoreFile').addEventListener('change', (e)=>{
+    const file = e.target.files[0];
+    if(!file) return;
+    const reader = new FileReader();
+    reader.onload = () => {
+      try{
+        const parsed = JSON.parse(reader.result);
+        const d = defaultState();
+        state = Object.assign(d, parsed, {
+          savings: Object.assign(d.savings, parsed.savings||{}),
+          settings: Object.assign(d.settings, parsed.settings||{}),
+          gami: Object.assign(d.gami, parsed.gami||{})
+        });
+        saveState();
+        showToast('Data berhasil dipulihkan!');
+        renderAll();
+      }catch(err){
+        showToast('File tidak valid.');
+      }
+    };
+    reader.readAsText(file);
+    e.target.value = '';
+  });
+
+  document.getElementById('btnResetAll').addEventListener('click', ()=> openModal('modalConfirmReset1'));
+  document.getElementById('toConfirmReset2').addEventListener('click', ()=>{
+    closeModal('modalConfirmReset1');
+    document.getElementById('resetConfirmInput').value='';
+    openModal('modalConfirmReset2');
+  });
+  document.getElementById('finalResetBtn').addEventListener('click', ()=>{
+    if(document.getElementById('resetConfirmInput').value.trim().toUpperCase() !== 'HAPUS'){
+      showToast('Ketik HAPUS dengan benar untuk konfirmasi.');
+      return;
+    }
+    state = defaultState();
+    saveState();
+    closeModal('modalConfirmReset2');
+    showToast('Semua data telah dihapus.');
+    renderAll();
+    goPage('beranda');
+  });
+
+  /* ---- history filter ---- */
+  document.querySelectorAll('.filter-tab').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      document.querySelectorAll('.filter-tab').forEach(b=>b.classList.remove('active'));
+      btn.classList.add('active');
+      currentFilter = btn.dataset.filter;
+      renderRiwayat();
+    });
+  });
+
+  /* ================= CONFETTI ================= */
+  const canvas = document.getElementById('confettiCanvas');
+  const ctx = canvas.getContext('2d');
+  function resizeCanvas(){ canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
+  window.addEventListener('resize', resizeCanvas);
+  resizeCanvas();
+  let confettiParticles = [];
+  function launchConfetti(){
+    const colors = ['#2ECC71','#FFC64B','#FF6B5E','#3D5A80','#F0A500'];
+    confettiParticles = [];
+    for(let i=0;i<120;i++){
+      confettiParticles.push({
+        x: Math.random()*canvas.width,
+        y: -20 - Math.random()*canvas.height*0.4,
+        w: 6+Math.random()*6,
+        h: 8+Math.random()*8,
+        color: colors[Math.floor(Math.random()*colors.length)],
+        speedY: 2+Math.random()*3,
+        speedX: (Math.random()-0.5)*2,
+        rot: Math.random()*360,
+        rotSpeed: (Math.random()-0.5)*10,
+      });
+    }
+    let frames = 0;
+    function frame(){
+      ctx.clearRect(0,0,canvas.width,canvas.height);
+      confettiParticles.forEach(p=>{
+        p.y += p.speedY; p.x += p.speedX; p.rot += p.rotSpeed;
+        ctx.save();
+        ctx.translate(p.x, p.y);
+        ctx.rotate(p.rot*Math.PI/180);
+        ctx.fillStyle = p.color;
+        ctx.fillRect(-p.w/2, -p.h/2, p.w, p.h);
+        ctx.restore();
+      });
+      frames++;
+      if(frames < 150){
+        requestAnimationFrame(frame);
+      } else {
+        ctx.clearRect(0,0,canvas.width,canvas.height);
+      }
+    }
+    requestAnimationFrame(frame);
+  }
+
+  /* ================= INIT ================= */
+  renderAll();
+})();
+</script>
+</body>
+</html>
